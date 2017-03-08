@@ -1,0 +1,28 @@
+<div id="sidebar" class="col col-3 sidebar">
+    <h4>Course Name</h4>
+    <!--<select class="form-control" v-model="courseId">
+                <option v-for="course in coursesList" :value="course.id" :key="course.id">
+                    {{`${course.year} ${course.name}` }}
+                </option>
+            </select>-->
+    <ui-select floating-label label="Current Course" placeholder="Select a Course" :options="coursesList" v-model="courseId"></ui-select>
+    <hr/>
+    <ui-collapsible :id="'v_group'+index" v-for="(videoGroup, index) in videosList" :title="videoGroup.section">
+        <ul class="list-group">
+            <li v-for="video in videoGroup.videos" @click="selectVideo({selectedVideo:video})" :class="{'is-active':videoId === video.id}"
+                class="list-item" style="cursor:pointer;">{{video.name}}</li>
+        </ul>
+    </ui-collapsible>
+    <!--<div :id="'v_group'+index" class="panel panel-default panel-group" v-for="(videoGroup, index) in videosList">
+        <div class="panel-heading">
+            <h4 class="panel-title">
+                <a class="accordion-toggle" data-toggle="collapse" data-parent="#accordionTwo" :href="'#collapse'+videoGroup.section.replace(/[^a-z0-9]/gi,'')">{{videoGroup.section}}</a>
+            </h4>
+        </div>
+        <div class="panel-collapse collapse in" :id="'collapse'+videoGroup.section.replace(/[^a-z0-9]/gi,'')">
+            <div class="list-group" v-for="video in videoGroup.videos">
+                <a :class="{'active':videoId === video.id}" @click="selectVideo({selectedVideo:video})" class="list-group-item" style="cursor:pointer;">{{video.name}}</a>
+            </div>
+        </div>
+    </div>-->
+</div>

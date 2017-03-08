@@ -1,0 +1,44 @@
+body {
+    background: white;
+    font-size: 16px;
+    margin: 0;
+}
+
+.main {
+    margin-top: 20px;
+    margin-bottom: 50px;
+}
+
+.setting {
+    cursor: pointer;
+}
+
+.add {
+    cursor: crosshair;
+}
+
+.editor .seg:nth-child(odd) {
+    background-color: peachpuff;
+}
+
+.editor .seg:nth-child(even) {
+    background-color: white;
+}
+
+.seg {
+    margin-top: 20px;
+}
+
+.coords {
+    display: flex;
+    flex-wrap: wrap;
+    width: 100%;
+}
+
+.coords div {
+    display: flex;
+    margin-left: 10px;
+}
+.coords div input{
+    width:80px;
+}

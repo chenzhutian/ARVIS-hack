@@ -1,0 +1,75 @@
+/* main view, middle part*/
+
+.main-page {
+    position: relative;
+}
+
+#content-video-progress-bar {
+    position: absolute;
+    top: 0;
+    width: 0;
+    height: 100%;
+    background: #aaaaaa;
+    border-right: dashed 1px;
+    border-color: #000000;
+    opacity: 0.2;
+    z-index: -3;
+}
+
+#stacked-area-graph {
+    width: calc(100% + 40px);
+    margin-left: -40px;
+}
+
+
+/* .video-container {
+     width: 100%;
+     height: 320px;
+     margin: auto;
+     overflow: hidden;
+ }*/
+
+
+/* video*/
+
+#moocVideo .video-js.vjs-default-skin.vjs-paused .vjs-big-play-button,
+#moocVideo .vjs-control-bar .vjs-current-time,
+#moocVideo .vjs-control-bar .vjs-time-divider,
+#moocVideo .vjs-control-bar .vjs-duration {
+    display: block;
+}
+
+#moocVideo .vjs-control-bar .vjs-progress-control {
+    position: absolute;
+    bottom: 26px;
+    /* The height of the ControlBar minus 4px. */
+    left: 0;
+    right: 0;
+    width: 100%;
+    height: 10px;
+    /* the height must be reduced from 30 to 10px in order to allow the buttons below (e.g. play) to be pushed */
+}
+
+#moocVideo .vjs-control-bar .vjs-progress-holder {
+    /* needed to have a real 100% width display. */
+    margin-left: 0px;
+    margin-right: 0px;
+}
+
+#moocVideo .vjs-control-bar .vjs-volume-menu-button {
+    position: absolute;
+    bottom: 0;
+    right: 55px;
+}
+
+#moocVideo .vjs-control-bar .vjs-playback-rate {
+    position: absolute;
+    bottom: 0;
+    right: 28px;
+}
+
+#moocVideo .vjs-control-bar .vjs-fullscreen-control {
+    position: absolute;
+    bottom: 0;
+    right: 0;
+}

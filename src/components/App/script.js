@@ -9,6 +9,7 @@ export default {
             currentSeg: null,
             original: [0, 0],
             segments: [],
+            results: '',
         };
     },
     methods: {
@@ -87,7 +88,8 @@ export default {
             this.drawRoads();
         },
         saveSegment() {
-            console.log(JSON.stringify(this.segments));
+            this.results = JSON.stringify(this.segments)
+            console.log(this.results);
         },
         drawRoads() {
             const ctx = this.ctx;

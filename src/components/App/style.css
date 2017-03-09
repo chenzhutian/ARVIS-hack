@@ -9,6 +9,11 @@ body {
     margin-bottom: 50px;
 }
 
+canvas.roads{
+    position: absolute;
+    left: 0;
+}
+
 .setting {
     cursor: pointer;
 }
@@ -17,15 +22,12 @@ body {
     cursor: crosshair;
 }
 
-.editor .seg:nth-child(odd) {
-    background-color: peachpuff;
-}
-
-.editor .seg:nth-child(even) {
-    background-color: white;
+.seg.current{
+    background-color: deepskyblue;
 }
 
 .seg {
+    background-color: lightgray;
     margin-top: 20px;
 }
 

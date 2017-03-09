@@ -4,13 +4,19 @@
         <button @click="settingOriginal">set original</button>
         <span> {{original}}</span>
         <button @click="addSegment">Add Segment</button>
+        <button @click="saveSegment">Save Segment</button>
     </section>
-    <section class="main">
+    <section class="main"  @click.ctrl="removeCoords(null)">
         <div class="map">
-            <canvas ref="canvas" :class="{'setting':isSetting, 'add':isAddCoords}" @click="clickCanvas" />
+            <canvas ref="canvas" />
+            <canvas ref="roads"
+            class="roads"
+            :class="{'setting':isSetting, 'add':isAddCoords}"
+            @click="clickCanvas"
+            @contextmenu="rightClickCanvas" />
         </div>
         <div class="editor">
-            <div v-for="seg in segments" class="seg">
+            <div v-for="seg in segments" class="seg" :class="{'current':seg === currentSeg}">
                 <span>id:</span>
                 <span>{{seg.id}}</span>
                 <span>name:</span>
@@ -19,13 +25,17 @@
                 <input type="text" v-model="seg.velocity" />
                 <span>quantity</span>
                 <input type="text" v-model="seg.quantity" />
+                <span>width</span>
+                <input type="text" v-model="seg.width" />
                 <button @click="addCoords(seg, $event)">Add Coords</button>
+                <button @click="removeCoords(seg)">Remove Coords</button>
                 <div class="coords">
                     <div v-for="(coord,idx) in seg.coords">
                         <span>{{`#${idx}:`}}</span>
                         <input type="text" v-model="seg.coords[idx]">
                     </div>
                 </div>
+
             </div>
         </div>
     </section>

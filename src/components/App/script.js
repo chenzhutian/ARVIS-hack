@@ -38,7 +38,7 @@ export default {
         },
         clickCanvas(evt) {
             console.log(evt);
-            if(evt.ctrlKey){
+            if (evt.ctrlKey) {
                 return;
             }
             if (this.isSetting) {
@@ -53,12 +53,12 @@ export default {
                 this.drawRoads();
             }
         },
-        cleanState(){
+        cleanState() {
             this.isSetting = false;
             this.isAddCoords = false;
             this.currentSeg = null;
         },
-        rightClickCanvas(evt){
+        rightClickCanvas(evt) {
             evt.preventDefault();
             this.cleanState();
         },
@@ -68,7 +68,7 @@ export default {
                 name: "No name",
                 velocity: 0,
                 quantity: 0,
-                width:2,
+                width: 2,
                 coords: [],
             };
             this.segments.push(seg);
@@ -81,14 +81,20 @@ export default {
             this.isSetting = false;
             this.currentSeg = seg;
         },
-        removeCoords(seg){
-            if(!seg) seg = this.currentSeg;
+        removeCoords(seg) {
+            if (!seg) seg = this.currentSeg;
             console.log(seg);
             seg.coords.pop();
             this.drawRoads();
         },
         saveSegment() {
-            this.results = JSON.stringify(this.segments)
+            const results = JSON.stringify(this.segments);
+            const coords = results.coords.map(d => ({
+                utm_lat: d[1],
+                utm_lon: d[0]
+            }));
+            results.coords = coords;
+            this.results = results;
             console.log(this.results);
         },
         drawRoads() {

@@ -88,13 +88,13 @@ export default {
             this.drawRoads();
         },
         saveSegment() {
-            const results = JSON.stringify(this.segments);
+            const results = this.segments;
             const coords = results.coords.map(d => ({
                 utm_lat: d[1],
                 utm_lon: d[0]
             }));
             results.coords = coords;
-            this.results = results;
+            this.results = JSON.stringify(results);
             console.log(this.results);
         },
         drawRoads() {

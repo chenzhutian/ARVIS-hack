@@ -1,8 +1,12 @@
+import region1 from '../assets/region1.png';
+import region2 from '../assets/region2.png';
+
 export default {
     ctx: null,
     img: null,
     data() {
         return {
+            regionId: 1,
             segIdGen: 0,
             isSetting: false,
             isAddCoords: false,
@@ -12,8 +16,25 @@ export default {
             results: '',
         };
     },
+    mounted() {
+        const cache = localStorage.getItem('segments');
+        const cacheId = localStorage.getItem('regionId');
+        if (cacheId) {
+            this.regionId = +cacheId;
+        }
+        if (cache) {
+            const segments = JSON.parse(cache);
+            for (const seg of segments) {
+                seg.coords = seg.coords.map(d => ([d.utm_lon, d.utm_lat]));
+            }
+            this.segments = segments;
+        }
+
+        this.loadImg(this.regionId);
+        setInterval(this.saveSegment(), 2000);
+    },
     methods: {
-        loadImg(evt) {
+        loadImg(id) {
             const ctx = this.$refs.canvas.getContext('2d');
             const ctx2 = this.$refs.roads.getContext('2d');
             const img = new Image();
@@ -27,17 +48,31 @@ export default {
                 ctx2.moveTo(0, 0);
                 ctx2.lineTo(200, 200);
                 ctx2.stroke();
-            }
-            img.src = URL.createObjectURL(evt.target.files[0]);
+                this.drawRoads();
+            };
+            img.src = id === 1 ? region1 : region2;
+            this.regionId = id;
             this.ctx = ctx2;
             this.img = img;
+        },
+        loadSegs(evt) {
+            const file = evt.target.files[0];
+            const fr = new FileReader();
+
+            fr.onload = (e) => {
+                this.segments = JSON.parse(e.target.result);
+                for (const seg of this.segments) {
+                    seg.coords = seg.coords.map(d => ([d.utm_lon, d.utm_lat]));
+                }
+                this.drawRoads();
+            };
+            fr.readAsText(file);
         },
         settingOriginal() {
             this.isSetting = true;
             this.isAddCoords = false;
         },
         clickCanvas(evt) {
-            console.log(evt);
             if (evt.ctrlKey) {
                 return;
             }
@@ -48,7 +83,7 @@ export default {
                 this.currentSeg
                     .coords
                     .push([evt.offsetX - this.original[0],
-                        evt.offsetY - this.original[1]
+                        evt.offsetY - this.original[1],
                     ]);
                 this.drawRoads();
             }
@@ -65,7 +100,7 @@ export default {
         addSegment() {
             const seg = {
                 id: this.segIdGen++,
-                name: "No name",
+                name: 'No name',
                 velocity: 0,
                 quantity: 0,
                 width: 2,
@@ -87,17 +122,20 @@ export default {
             seg.coords.pop();
             this.drawRoads();
         },
-        saveSegment() {
-            const results = this.segments.slice();
+        saveSegment(m) {
+            let results = JSON.parse(JSON.stringify(this.segments));
             for (const seg of results) {
                 seg.coords = seg.coords.map(d => ({
                     utm_lat: d[1],
-                    utm_lon: d[0]
+                    utm_lon: d[0],
                 }));
-
             }
-            this.results = JSON.stringify(results);
-            console.log(this.results);
+            results = JSON.stringify(results);
+            if (m === null) {
+                this.results = results;
+            }
+            localStorage.setItem('regionId', this.regionId);
+            localStorage.setItem('segments', results);
         },
         drawRoads() {
             const ctx = this.ctx;
@@ -114,6 +152,6 @@ export default {
                     ctx.stroke();
                 }
             }
-        }
-    }
+        },
+    },
 };

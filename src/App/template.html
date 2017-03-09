@@ -1,10 +1,12 @@
 <div>
     <section class="tools">
-        <input type="file" name="img" @change="loadImg" />
+        <button @click="loadImg(1)">Region1</button>
+        <button @click="loadImg(2)">Region2</button>
+        <input type="file" name="img" @change="loadSegs" />
         <button @click="settingOriginal">set original</button>
         <span> {{original}}</span>
         <button @click="addSegment">Add Segment</button>
-        <button @click="saveSegment">Save Segment</button>
+        <button @click="saveSegment(null)">Save Segment</button>
     </section>
     <section class="main"  @click.ctrl="removeCoords(null)">
         <div class="map">

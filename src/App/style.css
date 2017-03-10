@@ -23,7 +23,8 @@ canvas.roads {
 }
 
 .seg.current {
-    background-color: deepskyblue;
+    color: white;
+    background-color: darkslategray;
 }
 
 .seg {
@@ -33,6 +34,11 @@ canvas.roads {
 
 .poi {
     background-color: lightgreen;
+    margin-top: 10px;
+}
+
+.cp {
+    background-color: lightblue;
     margin-top: 10px;
 }
 

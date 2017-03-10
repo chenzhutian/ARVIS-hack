@@ -9,13 +9,15 @@ export default {
             regionId: 1,
             segIdGen: 0,
             poiIdGen: 0,
+            cpIdGen: 0,
             isAddCoords: false,
             isAddPOI: false,
+            isAddCP: false,
             currentSeg: null,
             segments: [],
-            results: '',
+            cps: [],
             pois: [],
-            poiResults: '',
+            results: '',
             autoSave: null,
         };
     },
@@ -26,23 +28,28 @@ export default {
             this.regionId = +cacheId;
         }
         if (cache) {
-            const data = JSON.parse(cache);
-            this.segments = data.segs || [];
-            this.pois = data.pois || [];
-            for (const seg of this.segments) {
-                seg.coords = seg.coords.map(d => ([d.utm_lon, d.utm_lat]));
-            }
-            this.poiIdGen = Math.max(...this.pois.map(d => d.id));
-            this.segIdGen = Math.max(...this.segments.map(d => d.id));
+            this.parse(cache);
         }
 
         this.loadImg(this.regionId);
         this.autoSave = setInterval(this.saveData, 1000);
     },
-    destroyed(){
+    destroyed() {
         clearInterval(this.autoSave);
     },
     methods: {
+        parse(dataStr) {
+            const data = JSON.parse(dataStr);
+            this.segments = data.segs || [];
+            this.pois = data.pois || [];
+            this.cps = data.cps || [];
+            for (const seg of this.segments) {
+                seg.coords = seg.coords.map(d => ([d.utm_lon, d.utm_lat]));
+            }
+            this.poiIdGen = Math.max(...this.pois.map(d => d.id));
+            this.segIdGen = Math.max(...this.segments.map(d => d.id));
+            this.cpIdGen = Math.max(...this.cps.map(d => d.id));
+        },
         loadImg(id) {
             const ctx = this.$refs.canvas.getContext('2d');
             const ctx2 = this.$refs.roads.getContext('2d');
@@ -68,12 +75,7 @@ export default {
             const file = evt.target.files[0];
             const fr = new FileReader();
             fr.onload = (e) => {
-                const data = JSON.parse(e.target.result);
-                this.segments = data.segs || [];
-                this.pois = data.pois || [];
-                for (const seg of this.segments) {
-                    seg.coords = seg.coords.map(d => ([d.utm_lon, d.utm_lat]));
-                }
+                this.parse(e.target.result);
                 this.drawRoads();
             };
             fr.readAsText(file);
@@ -97,11 +99,22 @@ export default {
                 };
                 this.pois.push(poi);
                 this.drawRoads();
+            } else if (this.isAddCP) {
+                const cp = {
+                    id: this.cpIdGen++,
+                    quantity: 0,
+                    r: 10,
+                    utm_lat: evt.offsetY,
+                    utm_lon: evt.offsetX,
+                };
+                this.cps.push(cp);
+                this.drawRoads();
             }
         },
         cleanState() {
             this.isAddCoords = false;
             this.isAddPOI = false;
+            this.isAddCP = false;
             this.currentSeg = null;
         },
         rightClickCanvas(evt) {
@@ -131,8 +144,15 @@ export default {
             this.cleanState();
             this.isAddPOI = true;
         },
+        addCP() {
+            this.cleanState();
+            this.isAddCP = true;
+        },
         removePOI(idx) {
             this.pois.splice(idx, 1);
+        },
+        removeCP(idx) {
+            this.cps.splice(idx, 1);
         },
         removeCoords(seg) {
             const cS = seg || this.currentSeg;
@@ -149,6 +169,7 @@ export default {
             }
             results = JSON.stringify({
                 pois: this.pois,
+                cps: this.cps,
                 segs: results,
             });
             localStorage.setItem('regionId', this.regionId);
@@ -182,11 +203,21 @@ export default {
                 }
                 ctx.fill();
             }
+
+            ctx.fillStyle = 'rgba(52, 152, 219, 0.5)';
+            for (const cp of this.cps) {
+                ctx.beginPath();
+                if (cp) {
+                    ctx.arc(cp.utm_lon, cp.utm_lat, cp.r, 0, PI2, false);
+                }
+                ctx.fill();
+            }
         },
         cleanCache() {
             // localStorage.clear();
             this.pois = [];
             this.segments = [];
+            this.cps = [];
             this.drawRoads();
         },
     },

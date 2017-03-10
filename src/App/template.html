@@ -5,13 +5,15 @@
         <input type="file" name="img" @change="loadSegs" />
         <button @click="addSegment">Add Segment</button>
         <button @click="addPOI">Add POI</button>
+        <button @click="addCP">Add Cellphone</button>
         <button @click="saveData(null)">Save</button>
         <button @click="cleanCache">Clean Cache</button>
+        <button @click="drawRoads">Refresh </button>
     </section>
     <section class="main" @click.ctrl="removeCoords(null)">
         <div class="map">
             <canvas ref="canvas" />
-            <canvas ref="roads" class="roads" :class="{'add':isAddCoords || isAddPOI }" @click="clickCanvas" @contextmenu="rightClickCanvas"
+            <canvas ref="roads" class="roads" :class="{'add':isAddCoords || isAddPOI|| isAddCP }" @click="clickCanvas" @contextmenu="rightClickCanvas"
             />
         </div>
         <div>
@@ -29,12 +31,12 @@
                 <input type="text" v-model="seg.quantity" />
                 <span>width</span>
                 <input type="text" v-model="seg.width" />
-                <button @click="addCoords(seg, $event)">Add Coords</button>
-                <button @click="removeCoords(seg)">Remove Coords</button>
+                <button tabindex="-1" @click="addCoords(seg, $event)">Add Coords</button>
+                <button tabindex="-1" @click="removeCoords(seg)">Remove Coords</button>
                 <div class="coords">
                     <div v-for="(coord,idx) in seg.coords">
                         <span>{{`#${idx}:`}}</span>
-                        <input type="text" v-model="seg.coords[idx]">
+                        <input tabindex="-1" type="text" v-model="seg.coords[idx]">
                     </div>
                 </div>
             </div>
@@ -46,10 +48,21 @@
                 <span>TYPE</span>
                 <input type="text" v-model="poi.Type" />
                 <span>X</span>
-                <input type="text" v-model="poi.utm_lat" />
+                <input tabindex="-1" type="text" v-model="poi.utm_lat" />
                 <span>Y</span>
-                <input type="text" v-model="poi.utm_lon" />
-                <button @click="removePOI(idx)">Remove</button>
+                <input tabindex="-1" type="text" v-model="poi.utm_lon" />
+                <button tabindex="-1" @click="removePOI(idx)">Remove</button>
+            </div>
+            <div v-for="(cp, idx) in cps" class="cp" :class="{}">
+                <span>id:</span>
+                <span>{{cp.id}}</span>
+                <span>Radius</span>
+                <input type="text" v-model="cp.r" @input="drawRoads"/>
+                <span>X</span>
+                <input tabindex="-1" type="text" v-model="cp.utm_lat" />
+                <span>Y</span>
+                <input tabindex="-1" type="text" v-model="cp.utm_lon" />
+                <button tabindex="-1" @click="removeCP(idx)">Remove</button>
             </div>
         </div>
     </section>

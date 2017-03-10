@@ -1,6 +1,6 @@
 import region1 from '../assets/region1.png';
 import region2 from '../assets/region2.png';
-
+/* eslint-disable no-plusplus */
 export default {
     ctx: null,
     img: null,
@@ -8,30 +8,39 @@ export default {
         return {
             regionId: 1,
             segIdGen: 0,
-            isSetting: false,
+            poiIdGen: 0,
             isAddCoords: false,
+            isAddPOI: false,
             currentSeg: null,
-            original: [0, 0],
             segments: [],
             results: '',
+            pois: [],
+            poiResults: '',
+            autoSave: null,
         };
     },
     mounted() {
-        const cache = localStorage.getItem('segments');
+        const cache = localStorage.getItem('results');
         const cacheId = localStorage.getItem('regionId');
         if (cacheId) {
             this.regionId = +cacheId;
         }
         if (cache) {
-            const segments = JSON.parse(cache);
-            for (const seg of segments) {
+            const data = JSON.parse(cache);
+            this.segments = data.segs || [];
+            this.pois = data.pois || [];
+            for (const seg of this.segments) {
                 seg.coords = seg.coords.map(d => ([d.utm_lon, d.utm_lat]));
             }
-            this.segments = segments;
+            this.poiIdGen = Math.max(...this.pois.map(d => d.id));
+            this.segIdGen = Math.max(...this.segments.map(d => d.id));
         }
 
         this.loadImg(this.regionId);
-        setInterval(this.saveSegment(), 2000);
+        this.autoSave = setInterval(this.saveData, 1000);
+    },
+    destroyed(){
+        clearInterval(this.autoSave);
     },
     methods: {
         loadImg(id) {
@@ -58,9 +67,10 @@ export default {
         loadSegs(evt) {
             const file = evt.target.files[0];
             const fr = new FileReader();
-
             fr.onload = (e) => {
-                this.segments = JSON.parse(e.target.result);
+                const data = JSON.parse(e.target.result);
+                this.segments = data.segs || [];
+                this.pois = data.pois || [];
                 for (const seg of this.segments) {
                     seg.coords = seg.coords.map(d => ([d.utm_lon, d.utm_lat]));
                 }
@@ -68,29 +78,30 @@ export default {
             };
             fr.readAsText(file);
         },
-        settingOriginal() {
-            this.isSetting = true;
-            this.isAddCoords = false;
-        },
         clickCanvas(evt) {
             if (evt.ctrlKey) {
                 return;
             }
-            if (this.isSetting) {
-                this.original = [evt.offsetX, evt.offsetY];
-                this.isSetting = false;
-            } else if (this.isAddCoords) {
+            if (this.isAddCoords) {
                 this.currentSeg
                     .coords
-                    .push([evt.offsetX - this.original[0],
-                        evt.offsetY - this.original[1],
-                    ]);
+                    .push([evt.offsetX, evt.offsetY]);
+                this.drawRoads();
+            } else if (this.isAddPOI) {
+                const poi = {
+                    id: this.poiIdGen++,
+                    Name: 'No name',
+                    Type: 'No type',
+                    utm_lat: evt.offsetY,
+                    utm_lon: evt.offsetX,
+                };
+                this.pois.push(poi);
                 this.drawRoads();
             }
         },
         cleanState() {
-            this.isSetting = false;
             this.isAddCoords = false;
+            this.isAddPOI = false;
             this.currentSeg = null;
         },
         rightClickCanvas(evt) {
@@ -112,17 +123,23 @@ export default {
             this.isAddCoords = true;
         },
         addCoords(seg, evt) {
+            this.cleanState();
             this.isAddCoords = true;
-            this.isSetting = false;
             this.currentSeg = seg;
         },
+        addPOI() {
+            this.cleanState();
+            this.isAddPOI = true;
+        },
+        removePOI(idx) {
+            this.pois.splice(idx, 1);
+        },
         removeCoords(seg) {
-            if (!seg) seg = this.currentSeg;
-            console.log(seg);
-            seg.coords.pop();
+            const cS = seg || this.currentSeg;
+            cS.coords.pop();
             this.drawRoads();
         },
-        saveSegment(m) {
+        saveData(m) {
             let results = JSON.parse(JSON.stringify(this.segments));
             for (const seg of results) {
                 seg.coords = seg.coords.map(d => ({
@@ -130,12 +147,15 @@ export default {
                     utm_lon: d[0],
                 }));
             }
-            results = JSON.stringify(results);
+            results = JSON.stringify({
+                pois: this.pois,
+                segs: results,
+            });
+            localStorage.setItem('regionId', this.regionId);
+            localStorage.setItem('results', results);
             if (m === null) {
                 this.results = results;
             }
-            localStorage.setItem('regionId', this.regionId);
-            localStorage.setItem('segments', results);
         },
         drawRoads() {
             const ctx = this.ctx;
@@ -152,6 +172,22 @@ export default {
                     ctx.stroke();
                 }
             }
+
+            const PI2 = Math.PI * 2;
+            ctx.fillStyle = 'green';
+            for (const poi of this.pois) {
+                ctx.beginPath();
+                if (poi) {
+                    ctx.arc(poi.utm_lon, poi.utm_lat, 3, 0, PI2, false);
+                }
+                ctx.fill();
+            }
+        },
+        cleanCache() {
+            // localStorage.clear();
+            this.pois = [];
+            this.segments = [];
+            this.drawRoads();
         },
     },
 };

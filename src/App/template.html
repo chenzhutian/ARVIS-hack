@@ -3,19 +3,16 @@
         <button @click="loadImg(1)">Region1</button>
         <button @click="loadImg(2)">Region2</button>
         <input type="file" name="img" @change="loadSegs" />
-        <button @click="settingOriginal">set original</button>
-        <span> {{original}}</span>
         <button @click="addSegment">Add Segment</button>
-        <button @click="saveSegment(null)">Save Segment</button>
+        <button @click="addPOI">Add POI</button>
+        <button @click="saveData(null)">Save</button>
+        <button @click="cleanCache">Clean Cache</button>
     </section>
-    <section class="main"  @click.ctrl="removeCoords(null)">
+    <section class="main" @click.ctrl="removeCoords(null)">
         <div class="map">
             <canvas ref="canvas" />
-            <canvas ref="roads"
-            class="roads"
-            :class="{'setting':isSetting, 'add':isAddCoords}"
-            @click="clickCanvas"
-            @contextmenu="rightClickCanvas" />
+            <canvas ref="roads" class="roads" :class="{'add':isAddCoords || isAddPOI }" @click="clickCanvas" @contextmenu="rightClickCanvas"
+            />
         </div>
         <div>
             <span>{{results}}</span>
@@ -40,7 +37,19 @@
                         <input type="text" v-model="seg.coords[idx]">
                     </div>
                 </div>
-
+            </div>
+            <div v-for="(poi, idx) in pois" class="poi" :class="{}">
+                <span>id:</span>
+                <span>{{poi.id}}</span>
+                <span>name:</span>
+                <input type="text" v-model="poi.Name" />
+                <span>TYPE</span>
+                <input type="text" v-model="poi.Type" />
+                <span>X</span>
+                <input type="text" v-model="poi.utm_lat" />
+                <span>Y</span>
+                <input type="text" v-model="poi.utm_lon" />
+                <button @click="removePOI(idx)">Remove</button>
             </div>
         </div>
     </section>

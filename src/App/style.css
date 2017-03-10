@@ -9,7 +9,7 @@ body {
     margin-bottom: 50px;
 }
 
-canvas.roads{
+canvas.roads {
     position: absolute;
     left: 0;
 }
@@ -22,13 +22,18 @@ canvas.roads{
     cursor: crosshair;
 }
 
-.seg.current{
+.seg.current {
     background-color: deepskyblue;
 }
 
 .seg {
     background-color: lightgray;
     margin-top: 20px;
+}
+
+.poi {
+    background-color: lightgreen;
+    margin-top: 10px;
 }
 
 .coords {
@@ -41,6 +46,7 @@ canvas.roads{
     display: flex;
     margin-left: 10px;
 }
-.coords div input{
-    width:80px;
+
+.coords div input {
+    width: 80px;
 }

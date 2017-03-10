@@ -16,9 +16,6 @@
             <canvas ref="roads" class="roads" :class="{'add':isAddCoords || isAddPOI|| isAddCP }" @click="clickCanvas" @contextmenu="rightClickCanvas"
             />
         </div>
-        <div>
-            <span>{{results}}</span>
-        </div>
         <div class="editor">
             <div v-for="seg in segments" class="seg" :class="{'current':seg === currentSeg}">
                 <span>id:</span>
@@ -57,7 +54,7 @@
                 <span>id:</span>
                 <span>{{cp.id}}</span>
                 <span>Radius</span>
-                <input type="text" v-model="cp.r" @input="drawRoads"/>
+                <input type="text" v-model="cp.r" @input="drawRoads" />
                 <span>X</span>
                 <input tabindex="-1" type="text" v-model="cp.utm_lat" />
                 <span>Y</span>
@@ -65,5 +62,9 @@
                 <button tabindex="-1" @click="removeCP(idx)">Remove</button>
             </div>
         </div>
+        <div>
+            <span>{{results}}</span>
+        </div>
+
     </section>
 </div>

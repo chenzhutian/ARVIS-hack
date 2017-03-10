@@ -204,9 +204,9 @@ export default {
                 ctx.fill();
             }
 
-            ctx.fillStyle = 'rgba(52, 152, 219, 0.5)';
             for (const cp of this.cps) {
                 ctx.beginPath();
+                ctx.fillStyle = `rgba(52, 152, 219, ${cp.quantity / 2000})`;
                 if (cp) {
                     ctx.arc(cp.utm_lon, cp.utm_lat, cp.r, 0, PI2, false);
                 }

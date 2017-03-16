@@ -102,7 +102,7 @@ export default {
             } else if (this.isAddCP) {
                 const cp = {
                     id: this.cpIdGen++,
-                    quantity: 0,
+                    quantity: 700,
                     r: 10,
                     utm_lat: evt.offsetY,
                     utm_lon: evt.offsetX,
@@ -126,7 +126,7 @@ export default {
                 id: this.segIdGen++,
                 name: 'No name',
                 velocity: 0,
-                quantity: 700,
+                quantity: 0,
                 width: 2,
                 coords: [],
             };

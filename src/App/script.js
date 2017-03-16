@@ -126,7 +126,7 @@ export default {
                 id: this.segIdGen++,
                 name: 'No name',
                 velocity: 0,
-                quantity: 0,
+                quantity: 700,
                 width: 2,
                 coords: [],
             };
